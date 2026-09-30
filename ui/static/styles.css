@@ -1,0 +1,578 @@
+﻿:root {
+    --bg: #07111f;
+    --panel: #0d1b2a;
+    --panel-light: #12263a;
+    --border: #1d3a52;
+    --text: #e8f1f8;
+    --muted: #8ea6b8;
+    --accent: #38bdf8;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #fb7185;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.10), transparent 35%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 42px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(7, 17, 31, 0.92);
+}
+
+.brand {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.tagline {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--success);
+    letter-spacing: 1px;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+}
+
+.container {
+    width: min(1400px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 36px 0 60px;
+}
+
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 34px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #0e2031, #091724);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+}
+
+.eyebrow {
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.hero h1 {
+    margin: 10px 0 6px;
+    font-size: 30px;
+}
+
+.hero p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.hero-status {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.badge {
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.severity {
+    color: #fff;
+    background: rgba(251, 113, 133, 0.16);
+    border: 1px solid rgba(251, 113, 133, 0.45);
+}
+
+.resolved {
+    color: var(--success);
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.card,
+.panel {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(13, 27, 42, 0.94);
+}
+
+.card {
+    padding: 22px;
+}
+
+.card-label {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.card-value {
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.accent {
+    color: var(--accent);
+}
+
+.panel {
+    margin-top: 18px;
+    padding: 28px;
+}
+
+.panel h2 {
+    margin: 7px 0 0;
+    font-size: 21px;
+}
+
+.timeline {
+    position: relative;
+    margin-top: 28px;
+    padding-left: 26px;
+}
+
+.timeline::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--border);
+}
+
+.timeline-item {
+    position: relative;
+    padding: 0 0 24px 24px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -25px;
+    top: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 3px solid var(--panel);
+    box-shadow: 0 0 0 1px var(--success);
+}
+
+.timeline-status {
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 1px;
+}
+
+.timeline-description {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.timeline-time {
+    margin-top: 5px;
+    color: #607b8f;
+    font-size: 11px;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.body-text {
+    margin-top: 18px;
+    color: #c4d4df;
+    line-height: 1.7;
+}
+
+.asset-section {
+    margin-top: 26px;
+}
+
+.asset-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.asset {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #b9cedd;
+    background: var(--panel-light);
+    font-family: Consolas, monospace;
+    font-size: 11px;
+}
+
+.verification-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.verification-item {
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-light);
+}
+
+.verification-item strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--success);
+    font-size: 14px;
+}
+
+.strategy-panel {
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
+.decision-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.decision-grid > div {
+    padding: 18px;
+    border-radius: 10px;
+    background: var(--panel-light);
+}
+
+.decision-grid strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.success {
+    color: var(--success);
+}
+
+.loading {
+    color: var(--muted);
+    padding: 15px 0;
+}
+
+.error {
+    color: var(--danger);
+}
+
+footer {
+    padding: 25px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: #607b8f;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 900px) {
+    .summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .topbar,
+    .hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .summary-grid,
+    .decision-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: min(100% - 24px, 1400px);
+    }
+}
+
+
+/* =========================================================
+   RECOVERY RISK EVALUATION
+   ========================================================= */
+
+.risk-panel {
+    margin-top: 24px;
+}
+
+.risk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.risk-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.risk-card {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.risk-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.risk-card h3 {
+    margin: 4px 0 0;
+    font-size: 20px;
+}
+
+.risk-score {
+    text-align: right;
+    min-width: 70px;
+}
+
+
+/* =========================================================
+   RECOVERY DECISION / BLAST RADIUS / PREVENTION / AUDIT
+   ========================================================= */
+
+.decision-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.reason-list {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    color: #c4d4df;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.reason-list li {
+    margin-bottom: 6px;
+}
+
+.rejected-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.rejected-card {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-light);
+}
+
+.rejected-card strong {
+    display: block;
+    color: var(--danger);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.rejected-card ul {
+    margin: 0;
+    padding-left: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.prevention-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.prevention-item {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-light);
+}
+
+.prevention-item strong {
+    display: block;
+    font-size: 13px;
+}
+
+.prevention-item span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.audit-timeline .timeline-item::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.explanation-box {
+    margin-top: 26px;
+    padding: 18px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 12px;
+    background: var(--panel-light);
+}
+
+.source-badge {
+    margin-left: 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--accent);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.explanation-disclaimer {
+    margin: 10px 0 0;
+    color: #607b8f;
+    font-size: 11px;
+    font-style: italic;
+}
+
+@media (max-width: 900px) {
+    .decision-detail {
+        grid-template-columns: 1fr;
+    }
+}
+
+.risk-score strong {
+    display: block;
+    font-size: 28px;
+    line-height: 1;
+    margin-top: 5px;
+}
+
+.risk-classification {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.risk-card:has(.risk-classification) {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.risk-factors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.risk-factors > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.risk-factors strong {
+    font-size: 14px;
+}
+
+.approval-required {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+@media (max-width: 1000px) {
+    .risk-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .risk-card-header {
+        flex-direction: column;
+    }
+
+    .risk-score {
+        text-align: left;
+    }
+}

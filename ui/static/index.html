@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS | Data Incident Recovery</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div>
+            <div class="brand">AEGIS</div>
+            <div class="tagline">AI-Powered Data Incident Recovery &amp; Prevention Engine</div>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            SYSTEM OPERATIONAL
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <div>
+                <div class="eyebrow">ACTIVE INCIDENT</div>
+                <h1 id="incident-id">Loading incident...</h1>
+                <p id="pipeline-name">Loading pipeline...</p>
+            </div>
+
+            <div class="hero-status">
+                <span id="severity" class="badge severity">--</span>
+                <span id="status" class="badge resolved">--</span>
+            </div>
+        </section>
+
+        <section class="summary-grid">
+
+            <div class="card">
+                <div class="card-label">INCIDENT TYPE</div>
+                <div id="error-type" class="card-value">--</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">UNEXPECTED COLUMN</div>
+                <div id="unexpected-column" class="card-value accent">--</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">RECOVERY STRATEGY</div>
+                <div id="strategy" class="card-value">--</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">EXECUTION SCOPE</div>
+                <div id="execution-scope" class="card-value">--</div>
+            </div>
+
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <div class="eyebrow">INCIDENT LIFECYCLE</div>
+                    <h2>Detect → Prove → Recover → Verify</h2>
+                </div>
+            </div>
+
+            <div id="timeline" class="timeline">
+                <div class="loading">Loading lifecycle...</div>
+            </div>
+        </section>
+
+        <section class="two-column">
+
+            <div class="panel">
+                <div class="eyebrow">ROOT CAUSE</div>
+                <h2>Why did this happen?</h2>
+                <p id="root-cause" class="body-text">Loading...</p>
+
+                <div class="asset-section">
+                    <div class="card-label">AFFECTED ASSETS</div>
+                    <div id="affected-assets" class="asset-list"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="eyebrow">RECOVERY VERIFICATION</div>
+                <h2>Was recovery successful?</h2>
+
+                <div id="verification" class="verification-grid"></div>
+            </div>
+
+        </section>
+
+              <section class="panel risk-panel">
+            <div class="eyebrow">RECOVERY RISK EVALUATION</div>
+            <div class="risk-header">
+                <div>
+                    <h2>Compare Recovery Strategies</h2>
+                    <p id="risk-summary" class="body-text">
+                        Loading risk evaluation...
+                    </p>
+                </div>
+            </div>
+
+            <div id="risk-evaluations" class="risk-grid">
+                <div class="loading">Loading risk evaluation...</div>
+            </div>
+        </section>
+
+        <section class="panel strategy-panel">
+            <div class="eyebrow">RECOVERY DECISION</div>
+            <h2>AEGIS Recommendation</h2>
+            <p id="decision-summary" class="body-text">Loading recovery decision...</p>
+
+            <div class="decision-grid">
+                <div>
+                    <span class="card-label">RECOMMENDED STRATEGY</span>
+                    <strong id="decision-strategy">--</strong>
+                </div>
+
+                <div>
+                    <span class="card-label">HUMAN APPROVAL</span>
+                    <strong id="decision-approval" class="success">--</strong>
+                </div>
+
+                <div>
+                    <span class="card-label">PRODUCTION</span>
+                    <strong id="production-modified">--</strong>
+                </div>
+
+                <div>
+                    <span class="card-label">DECISION CONFIDENCE</span>
+                    <strong id="decision-confidence">--</strong>
+                </div>
+            </div>
+
+            <div class="decision-detail">
+                <div>
+                    <span class="card-label">WHY THIS STRATEGY</span>
+                    <ul id="decision-factors" class="reason-list"></ul>
+                </div>
+
+                <div>
+                    <span class="card-label">TRADE-OFFS</span>
+                    <ul id="decision-tradeoffs" class="reason-list"></ul>
+                </div>
+            </div>
+
+            <div class="asset-section">
+                <span class="card-label">REJECTED ALTERNATIVES</span>
+                <div id="decision-rejected" class="rejected-grid"></div>
+            </div>
+
+            <div class="asset-section explanation-box">
+                <span class="card-label">
+                    AI EXPLANATION
+                    <span id="explanation-source" class="source-badge">--</span>
+                </span>
+                <p id="explanation-narrative" class="body-text">Loading explanation...</p>
+                <p class="explanation-disclaimer">
+                    Advisory only — this narration cannot change the recommendation,
+                    approval, or execution state above.
+                </p>
+            </div>
+        </section>
+
+        <section class="two-column">
+            <div class="panel">
+                <div class="eyebrow">BLAST RADIUS</div>
+                <h2>Downstream Impact</h2>
+                <p id="blast-radius-summary" class="body-text">Loading impact analysis...</p>
+                <div id="blast-radius-assets" class="asset-list"></div>
+            </div>
+
+            <div class="panel">
+                <div class="eyebrow">PREVENTION</div>
+                <h2>Recommended Controls</h2>
+                <div id="prevention-controls" class="prevention-list">
+                    <div class="loading">Loading prevention recommendations...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="eyebrow">AUDIT TRAIL</div>
+            <h2>Every Action, Recorded</h2>
+            <div id="audit-timeline" class="timeline audit-timeline">
+                <div class="loading">Loading audit trail...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        AEGIS · Detect. Prove. Simulate. Recover. Prevent.
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

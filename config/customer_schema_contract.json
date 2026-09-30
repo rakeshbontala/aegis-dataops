@@ -1,0 +1,11 @@
+{
+  "pipeline": "customer_gold_pipeline",
+  "source": "silver.customers",
+  "expected_columns": [
+    "customer_id",
+    "customer_name",
+    "country",
+    "status"
+  ],
+  "allow_new_columns": false
+}
