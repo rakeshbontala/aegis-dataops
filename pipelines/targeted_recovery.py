@@ -6,7 +6,12 @@ from pyspark.sql import SparkSession
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-CONTRACT_PATH = PROJECT_ROOT / "config" / "customer_schema_contract.json"
+# Pinned to the contract as it existed for INC-20260930-001, not the live
+# (now much larger) config/customer_schema_contract.json - the frozen sandbox
+# fixtures below were produced against that original 4-column schema only.
+CONTRACT_PATH = (
+    PROJECT_ROOT / "data" / "sandbox" / "recovery" / "before" / "schema_contract_snapshot.json"
+)
 
 SOURCE_PATH = PROJECT_ROOT / "data" / "sandbox" / "recovery" / "before" / "customers_bronze"
 
