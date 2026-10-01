@@ -94,7 +94,44 @@
 
         </section>
 
-              <section class="panel risk-panel">
+        <section class="panel agent-panel">
+            <div class="panel-header agent-header">
+                <div>
+                    <div class="eyebrow">AGENT WORKFLOW</div>
+                    <h2>Evidence-Grounded Investigation</h2>
+                </div>
+                <span id="agent-workflow-status" class="source-badge">LOADING</span>
+            </div>
+
+            <div class="agent-boundary">
+                <div><span>AI ANALYSIS</span><strong id="agent-provider">--</strong></div>
+                <div><span>DETERMINISTIC RESULT</span><strong id="agent-decision-state">--</strong></div>
+                <div><span>HUMAN APPROVAL</span><strong id="agent-approval-state">--</strong></div>
+                <div><span>SANDBOX EXECUTION</span><strong id="agent-execution-state">--</strong></div>
+                <div><span>VERIFIED</span><strong id="agent-verification-state">--</strong></div>
+            </div>
+
+            <div class="agent-analysis-grid">
+                <div>
+                    <span class="card-label">INVESTIGATOR AGENT</span>
+                    <p id="agent-investigation-summary" class="body-text">Loading agent report...</p>
+                    <div id="agent-evidence" class="asset-list"></div>
+                </div>
+                <div>
+                    <span class="card-label">RECOVERY STRATEGY AGENT</span>
+                    <p id="agent-recovery-summary" class="body-text">Loading recovery analysis...</p>
+                    <p id="agent-next-action" class="agent-next-action"></p>
+                </div>
+            </div>
+
+            <p class="agent-disclaimer">
+                AI did not decide the risk score, the recommended strategy, or whether execution is
+                allowed — those come from the deterministic risk/decision engines and the human
+                approver above.
+            </p>
+        </section>
+
+        <section class="panel risk-panel">
             <div class="eyebrow">RECOVERY RISK EVALUATION</div>
             <div class="risk-header">
                 <div>

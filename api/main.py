@@ -7,8 +7,10 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from agents.orchestrator_agent import RecoveryOrchestratorAgent, load_agent_report
 from config.settings import settings
 from engine.audit.audit_log import read_events
+from engine.prevention.incident_memory import find_similar_incidents
 from engine.recovery.approve_recovery import ApprovalError, decide_approval
 from engine.recovery.authorization_record import authorize
 from engine.recovery.sandbox_execution_engine import ExecutionBlockedError, execute_recovery
@@ -207,6 +209,25 @@ def get_incident_prevention(incident_id: str):
     return json.loads(prevention_file.read_text(encoding="utf-8"))
 
 
+@app.get("/api/incidents/{incident_id}/agents")
+def get_incident_agent_report(incident_id: str):
+    _load_incident(incident_id)
+    try:
+        return load_agent_report(incident_id)
+    except FileNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@app.get("/api/incidents/{incident_id}/memory")
+def get_incident_memory(incident_id: str):
+    _load_incident(incident_id)
+    memory_file = settings.paths.historical_dir / f"{incident_id}.json"
+    if not memory_file.exists():
+        raise HTTPException(status_code=404, detail=f"Incident memory not found: {incident_id}")
+    memory = json.loads(memory_file.read_text(encoding="utf-8"))
+    return {**memory, "similar_incidents": find_similar_incidents(incident_id)}
+
+
 # --------------------------------------------------------------------------
 # Guarded state-changing endpoints.
 #
@@ -214,6 +235,24 @@ def get_incident_prevention(incident_id: str):
 # production. Every check is fail-closed: on any missing precondition the
 # request is rejected (4xx) rather than silently proceeding.
 # --------------------------------------------------------------------------
+
+
+@app.post("/api/incidents/{incident_id}/investigate")
+def investigate_incident(incident_id: str):
+    _load_incident(incident_id)
+    try:
+        return RecoveryOrchestratorAgent().run_analysis(incident_id)
+    except (FileNotFoundError, ValueError) as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+
+@app.post("/api/incidents/{incident_id}/prevention/analyze")
+def analyze_incident_prevention(incident_id: str):
+    _load_incident(incident_id)
+    result = RecoveryOrchestratorAgent().run_post_recovery(incident_id)
+    if result.get("workflow_status") == "BLOCKED":
+        raise HTTPException(status_code=409, detail=result.get("reason", "Agent workflow blocked."))
+    return result
 
 
 @app.post("/api/incidents/{incident_id}/simulate")

@@ -171,6 +171,83 @@ body {
     font-size: 21px;
 }
 
+.agent-panel {
+    border-color: rgba(52, 211, 153, 0.35);
+}
+
+.agent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.agent-boundary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.agent-boundary > div {
+    min-width: 0;
+    padding: 16px 14px;
+    border-right: 1px solid var(--border);
+}
+
+.agent-boundary > div:last-child {
+    border-right: 0;
+}
+
+.agent-boundary span,
+.agent-boundary strong {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.agent-boundary span {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.agent-boundary strong {
+    margin-top: 7px;
+    font-size: 12px;
+}
+
+.agent-analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    margin-top: 26px;
+}
+
+.agent-analysis-grid .body-text {
+    margin-top: 10px;
+}
+
+.agent-next-action {
+    margin: 14px 0 0;
+    padding-left: 12px;
+    border-left: 2px solid var(--warning);
+    color: var(--warning);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.agent-disclaimer {
+    margin: 22px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    font-style: italic;
+    line-height: 1.6;
+}
+
 .timeline {
     position: relative;
     margin-top: 28px;
@@ -333,13 +410,32 @@ footer {
     .two-column {
         grid-template-columns: 1fr;
     }
+
+    .agent-boundary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .agent-boundary > div {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .agent-analysis-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
     .topbar,
-    .hero {
+    .hero,
+    .agent-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    #agent-workflow-status {
+        max-width: 100%;
+        margin-left: 0;
+        overflow-wrap: anywhere;
     }
 
     .summary-grid,
@@ -349,6 +445,10 @@ footer {
 
     .container {
         width: min(100% - 24px, 1400px);
+    }
+
+    .agent-boundary {
+        grid-template-columns: 1fr;
     }
 }
 

@@ -26,7 +26,7 @@ INCIDENT_ID = "INC-20260930-001"
 STRATEGY_ID = "REC-002"
 APPROVER = "Rakesh Bontala"
 
-TOTAL_STEPS = 12
+TOTAL_STEPS = 15
 
 
 def _print_header() -> None:
@@ -57,6 +57,11 @@ def _step(number: int, label: str, func):
 def main() -> int:
     _print_header()
 
+    import json
+
+    from agents.base_agent import IncidentContext
+    from agents.investigator_agent import schema_evidence_references
+    from agents.orchestrator_agent import RecoveryOrchestratorAgent
     from engine.evidence.evidence_collector import collect_evidence
     from engine.impact.impact_engine import analyze_impact
     from engine.lineage.lineage_engine import analyze_lineage
@@ -72,18 +77,39 @@ def main() -> int:
     from engine.simulation.simulation_engine import run_simulation
     from engine.verification.verification_engine import run_verification_checklist
 
-    _step(1, "Collecting evidence", lambda: collect_evidence(INCIDENT_ID))
-    _step(2, "Root cause analysis", lambda: analyze_root_cause(INCIDENT_ID))
-    _step(3, "Calculating blast radius", lambda: analyze_lineage(INCIDENT_ID))
-    _step(4, "Calculating business impact", lambda: analyze_impact(INCIDENT_ID))
-    _step(5, "Generating recovery strategies", lambda: generate_strategies(INCIDENT_ID))
+    incident = json.loads(
+        (PROJECT_ROOT / "data" / "incidents" / f"{INCIDENT_ID}.json").read_text(encoding="utf-8")
+    )
+    evidence = _step(1, "Collecting evidence", lambda: collect_evidence(INCIDENT_ID))
+    rca = _step(2, "Root cause analysis", lambda: analyze_root_cause(INCIDENT_ID))
+    lineage = _step(3, "Calculating blast radius", lambda: analyze_lineage(INCIDENT_ID))
+    impact = _step(4, "Calculating business impact", lambda: analyze_impact(INCIDENT_ID))
+    strategies = _step(5, "Generating recovery strategies", lambda: generate_strategies(INCIDENT_ID))
     risk = _step(6, "Evaluating risk", lambda: evaluate_risk(INCIDENT_ID))
     decision = _step(7, "Generating recovery decision", lambda: generate_decision(INCIDENT_ID))
-    _step(8, "Simulating recovery (sandbox)", lambda: run_simulation(INCIDENT_ID))
-    _step(9, "Requesting human approval", request_approval)
+    simulation = _step(8, "Simulating recovery (sandbox)", lambda: run_simulation(INCIDENT_ID))
+
+    context = IncidentContext(
+        incident_id=INCIDENT_ID,
+        incident=incident,
+        evidence=schema_evidence_references(evidence or {}),
+        root_cause=rca or {},
+        lineage=lineage or {},
+        business_impact=impact or {},
+        recovery_strategies=strategies or {},
+        risk_results=risk or {},
+        decision=decision or {},
+        simulation_result=simulation or {},
+    )
+    agent_report = _step(
+        9,
+        "Running agent investigation",
+        lambda: RecoveryOrchestratorAgent().analyze_context(context, persist=True),
+    )
+    _step(10, "Requesting human approval", request_approval)
 
     approval = _step(
-        10,
+        11,
         "Recording human approval",
         lambda: decide_approval(INCIDENT_ID, STRATEGY_ID, "APPROVE", APPROVER),
     )
@@ -91,13 +117,18 @@ def main() -> int:
         authorize(INCIDENT_ID, STRATEGY_ID)
 
     execution = _step(
-        11,
+        12,
         "Executing sandbox recovery",
         lambda: execute_recovery(INCIDENT_ID, STRATEGY_ID),
     )
-    _step(12, "Verifying recovery", lambda: run_verification_checklist(INCIDENT_ID))
+    _step(13, "Verifying recovery", lambda: run_verification_checklist(INCIDENT_ID))
 
-    prevention = generate_prevention(INCIDENT_ID)
+    prevention = _step(14, "Generating prevention", lambda: generate_prevention(INCIDENT_ID))
+    post_recovery = _step(
+        15,
+        "Running prevention agent",
+        lambda: RecoveryOrchestratorAgent().run_post_recovery(INCIDENT_ID),
+    )
 
     print()
     print("=" * 72)
@@ -108,6 +139,10 @@ def main() -> int:
         recommended = decision["recommended_strategy"]
         print(f"Recommended strategy : {recommended['strategy_id']} - {recommended['name']}")
         print(f"Decision confidence   : {decision['confidence']}")
+
+    if agent_report is not None:
+        print(f"Agent workflow        : {agent_report['workflow_status']}")
+        print("Agent execution       : DISALLOWED (advisory only)")
 
     if risk is not None:
         print("Risk comparison       :", ", ".join(
@@ -121,7 +156,10 @@ def main() -> int:
         if execution.get("idempotent"):
             print("Execution note        : already executed previously (idempotent no-op)")
 
-    print(f"Prevention controls   : {prevention['prevention_control_count']} generated")
+    if prevention is not None:
+        print(f"Prevention controls   : {prevention['prevention_control_count']} generated")
+    if post_recovery is not None:
+        print(f"Prevention agent      : {post_recovery['workflow_status']}")
     print()
     print("Production modified: FALSE")
     print("AEGIS DEMO COMPLETE")

@@ -53,6 +53,7 @@ async function loadIncident() {
 
         await loadRiskEvaluation();
         await loadDecision();
+        await loadAgentReport(incident);
         await loadExplanation();
         await loadBlastRadiusAndPrevention();
         await loadAuditTrail();
@@ -64,6 +65,54 @@ async function loadIncident() {
                 ${escapeHtml(error.message)}
             </div>
         `;
+    }
+}
+
+
+async function loadAgentReport(incident) {
+    const statusEl = document.getElementById("agent-workflow-status");
+
+    try {
+        const response = await fetch(`/api/incidents/${INCIDENT_ID}/agents`);
+        if (!response.ok) {
+            throw new Error(`Agent API returned ${response.status}`);
+        }
+
+        const report = await response.json();
+        const investigation = report.investigation || {};
+        const recovery = report.recovery_analysis || {};
+        const evidence = investigation.evidence || [];
+
+        statusEl.textContent = report.workflow_status || "UNKNOWN";
+        document.getElementById("agent-provider").textContent =
+            investigation.provider === "deterministic" ? "DETERMINISTIC FALLBACK" : "OPTIONAL MODEL";
+        document.getElementById("agent-decision-state").textContent =
+            recovery.details?.recommended_strategy?.strategy_id || "BLOCKED";
+        document.getElementById("agent-approval-state").textContent =
+            report.workflow_status === "WAITING_FOR_HUMAN_APPROVAL" ? "REQUIRED" : "RECORDED SEPARATELY";
+        document.getElementById("agent-execution-state").textContent =
+            incident.resolution_strategy?.execution_scope || "NOT EXECUTED";
+        document.getElementById("agent-verification-state").textContent =
+            incident.verification?.post_execution_status || "PENDING";
+        document.getElementById("agent-investigation-summary").textContent =
+            investigation.summary || "Agent investigation unavailable.";
+        document.getElementById("agent-recovery-summary").textContent =
+            recovery.summary || "Agent recovery analysis unavailable.";
+        document.getElementById("agent-next-action").textContent =
+            report.next_required_action || "No agent action available.";
+        document.getElementById("agent-evidence").innerHTML = evidence.length
+            ? evidence.map(item => `
+                <span class="asset" title="${escapeHtml(item.source || "")}">
+                    ${escapeHtml(item.evidence_id)} · ${escapeHtml(item.supports)}
+                </span>
+            `).join("")
+            : "<span class='asset'>Insufficient evidence</span>";
+    } catch (error) {
+        statusEl.textContent = "NOT RUN";
+        document.getElementById("agent-investigation-summary").textContent =
+            "Run the guarded investigation endpoint to generate an agent report.";
+        document.getElementById("agent-recovery-summary").textContent =
+            "No agent recommendation is currently persisted.";
     }
 }
 

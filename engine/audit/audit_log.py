@@ -45,6 +45,7 @@ VALID_ACTIONS = {
     "verification_completed",
     "incident_resolved",
     "prevention_generated",
+    "agent_invoked",
 }
 
 _SECRET_KEY_HINTS = ("password", "token", "secret", "api_key", "apikey", "credential")

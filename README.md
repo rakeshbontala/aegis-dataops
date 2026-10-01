@@ -49,6 +49,7 @@ Detection → Evidence → RCA → Lineage/Impact → Recovery Strategies
 | Prevention | `engine/prevention/prevention_engine.py` | Generates and persists prevention recommendations per incident. |
 | Memory | `engine/prevention/incident_memory.py` | Persists a historical fingerprint of the incident. |
 | **Advisory AI narration** | `agents/recovery_agent.py` | Optional, isolated layer that rephrases the decision engine's own facts into an executive summary. Off by default; falls back to a deterministic narrative built from the same fields if no LLM is configured. Never influences the recommendation, approval, or execution. |
+| **Operational agents** | `agents/investigator_agent.py`, `recovery_strategy_agent.py`, `orchestrator_agent.py`, `prevention_agent.py` | Structured, evidence-grounded investigation, strategy explanation, safe orchestration, and prevention analysis. The orchestrator stops for human approval and has no direct execution tool. |
 | Audit | `engine/audit/audit_log.py` | Append-only JSONL audit trail per incident. |
 | Security | `engine/security/identifiers.py` | Allowlist validation for incident/strategy ids and actor names (path-traversal/injection defense). |
 | Config | `config/settings.py` | Environment-driven paths, risk weights, execution-safety flags, feature flags. |
@@ -107,7 +108,7 @@ python -m uvicorn api.main:app --reload
 ```
 
 ```powershell
-# Full deterministic demo (12-step, safe to re-run)
+# Full deterministic + agent demo (15-step, safe to re-run)
 python scripts/run_demo.py
 ```
 
@@ -159,7 +160,11 @@ GET  /api/incidents/{id}/impact
 GET  /api/incidents/{id}/verification
 GET  /api/incidents/{id}/audit
 GET  /api/incidents/{id}/prevention
+GET  /api/incidents/{id}/agents
+GET  /api/incidents/{id}/memory
 
+POST /api/incidents/{id}/investigate
+POST /api/incidents/{id}/prevention/analyze
 POST /api/incidents/{id}/simulate
 POST /api/incidents/{id}/approval   { strategy_id, decision, approver }
 POST /api/incidents/{id}/execute    ?strategy_id=...
@@ -175,7 +180,8 @@ Every incident/strategy id is validated against an allowlist regex
 live API data: incident summary, lifecycle timeline, root cause, affected
 assets, recovery risk comparison, the AEGIS recommendation with its
 reasoning and rejected alternatives, blast radius, prevention
-recommendations, verification results, and a full audit trail. Nothing on
+recommendations, structured agent investigation with evidence references,
+verification results, and a full audit trail. Nothing on
 the dashboard is hardcoded to look "approved" — the approval badge is
 derived from the actual audit log.
 
@@ -197,6 +203,10 @@ derived from the actual audit log.
   local/demo deployment, not exposed to the public internet.
 - Detection currently targets one schema contract (`customer_schema_contract.json`)
   for one pipeline; it is not a generic multi-pipeline monitoring service.
+- The investigator supports additive schema drift and required-column removal
+  when deterministic schema evidence is supplied. Datatype drift, duplicates,
+  null violations, invalid statuses, late data, and combined failures remain
+  fail-closed until deterministic detectors are implemented for those facts.
 
 ## 10. Future improvements
 

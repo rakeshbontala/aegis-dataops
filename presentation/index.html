@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEGIS — Round 1 Presentation</title>
+<style>
+:root {
+    --bg: #07111f;
+    --panel: #0d1b2a;
+    --panel-light: #12263a;
+    --border: #1d3a52;
+    --text: #e8f1f8;
+    --muted: #8ea6b8;
+    --accent: #38bdf8;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #fb7185;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    overflow: hidden;
+}
+.deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+.slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 96px;
+    background:
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.10), transparent 35%),
+        var(--bg);
+}
+.slide.active { display: flex; }
+.eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+h1 { font-size: 46px; margin: 0 0 10px; line-height: 1.15; }
+h2 { font-size: 30px; margin: 0 0 18px; }
+.tagline { color: var(--muted); font-size: 18px; margin: 0 0 30px; }
+p, li { font-size: 17px; line-height: 1.6; color: #c4d4df; }
+ul { padding-left: 22px; }
+.badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: rgba(251, 113, 133, 0.14);
+    border: 1px solid rgba(251, 113, 133, 0.4);
+    color: #fff;
+    margin-bottom: 20px;
+}
+.flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+.flow span {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-light);
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+}
+.flow .arrow { color: var(--muted); border: none; background: none; padding: 10px 2px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel);
+    padding: 20px 24px;
+}
+.card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+}
+th { color: var(--accent); background: var(--panel-light); }
+.metric { color: var(--success); font-weight: 800; }
+.note {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--warning);
+    background: var(--panel-light);
+    color: var(--warning);
+    font-size: 13px;
+    font-style: italic;
+}
+.closing {
+    margin-top: 24px;
+    font-size: 21px;
+    color: var(--text);
+    font-weight: 600;
+    border-left: 3px solid var(--accent);
+    padding-left: 18px;
+}
+.progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.25s ease;
+}
+.pager {
+    position: fixed;
+    bottom: 18px;
+    right: 28px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+@media print {
+    body { overflow: visible; }
+    .slide {
+        display: flex !important;
+        position: relative;
+        page-break-after: always;
+        height: 100vh;
+    }
+    .progress, .pager { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+    <section class="slide active">
+        <div class="eyebrow">AEGIS</div>
+        <h1>AI-Assisted Data Incident Recovery &amp; Prevention Engine</h1>
+        <p class="tagline">Detect. Prove. Investigate. Recover. Verify. Prevent.</p>
+        <div class="badge">THE 3 AM PROBLEM</div>
+        <p>A critical data pipeline's source schema changes without an approved contract
+        update. Someone has to prove what happened, what it affects, how to recover it
+        safely — and how to stop it from happening again.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">THE PROBLEM</div>
+        <h2>A real Data Engineering incident</h2>
+        <p><strong>Pipeline:</strong> <code>customer_gold_pipeline</code> &nbsp;
+        <strong>Severity:</strong> P1</p>
+        <div class="two-col">
+            <div class="card">
+                <h3>Expected schema (contract)</h3>
+                <ul>
+                    <li>customer_id</li><li>customer_name</li><li>country</li><li>status</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Observed schema (source)</h3>
+                <ul>
+                    <li>customer_id</li><li>customer_name</li><li>country</li><li>status</li>
+                    <li style="color:var(--warning)">customer_segment (unapproved)</li>
+                </ul>
+            </div>
+        </div>
+        <p class="note">The downstream Spark pipeline is schema-tolerant — it does not
+        crash. Nothing alerts unless something is actively comparing the source against
+        the registered schema contract.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">WHY THIS IS HARD TODAY</div>
+        <h2>Investigation is fragmented across tools</h2>
+        <div class="flow">
+            <span>Logs</span><span class="arrow">+</span>
+            <span>Schema</span><span class="arrow">+</span>
+            <span>Data Quality</span><span class="arrow">+</span>
+            <span>Lineage</span><span class="arrow">+</span>
+            <span>Recovery History</span><span class="arrow">+</span>
+            <span>Manual Validation</span>
+        </div>
+        <p>Each source lives in a different tool, dashboard, or person's memory.
+        Correlating them under incident pressure — manually, at 3 AM — is slow and
+        error-prone, and nothing is captured as an auditable trail by default.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">HOW AEGIS WORKS</div>
+        <h2>One controlled workflow, not another dashboard</h2>
+        <div class="flow">
+            <span>Detect</span><span class="arrow">→</span>
+            <span>Prove</span><span class="arrow">→</span>
+            <span>Investigate</span><span class="arrow">→</span>
+            <span>Impact</span><span class="arrow">→</span>
+            <span>Recover</span><span class="arrow">→</span>
+            <span>Verify</span><span class="arrow">→</span>
+            <span>Prevent</span>
+        </div>
+        <p>Every stage is a real, tested, callable function — the same code path is used
+        by the CLI, the orchestrator, the API, the demo, and 96 automated tests. Nothing
+        shown in the demo is simulated for slides only.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">WHAT MAKES AEGIS DIFFERENT</div>
+        <h2>Not "AI-powered." A controlled combination.</h2>
+        <div class="flow">
+            <span>Evidence-grounded AI investigation</span>
+            <span class="arrow">+</span>
+            <span>Deterministic risk scoring</span>
+            <span class="arrow">+</span>
+            <span>Policy-controlled execution</span>
+            <span class="arrow">+</span>
+            <span>Mandatory human approval</span>
+            <span class="arrow">+</span>
+            <span>Sandbox-only recovery</span>
+            <span class="arrow">+</span>
+            <span>Post-recovery verification</span>
+            <span class="arrow">+</span>
+            <span>Incident memory</span>
+        </div>
+        <p>AI correlates evidence and explains root cause/recovery trade-offs. It cannot
+        invent evidence, change a risk score, approve, authorize, or execute anything.
+        Every claim below is evidence-referenced (EV-001..EV-004) and independently
+        testable.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">ARCHITECTURE</div>
+        <h2>Detection → Recovery → Verification → Prevention</h2>
+        <div class="flow" style="font-size:12px">
+            <span>Bronze/Silver/Gold</span><span class="arrow">→</span>
+            <span>Schema Contract Check</span><span class="arrow">→</span>
+            <span>Evidence</span><span class="arrow">→</span>
+            <span>RCA</span><span class="arrow">→</span>
+            <span>Lineage/Impact</span><span class="arrow">→</span>
+            <span>Investigator Agent</span><span class="arrow">→</span>
+            <span>Recovery Strategies (REC-001/002/003)</span><span class="arrow">→</span>
+            <span>Risk Engine</span><span class="arrow">→</span>
+            <span>Decision Engine</span><span class="arrow">→</span>
+            <span>Recovery Strategy Agent</span><span class="arrow">→</span>
+            <span>Simulation</span><span class="arrow">→</span>
+            <span style="color:var(--warning)">Human Approval</span><span class="arrow">→</span>
+            <span>Authorization</span><span class="arrow">→</span>
+            <span style="color:var(--success)">Sandbox Execution</span><span class="arrow">→</span>
+            <span>Verification</span><span class="arrow">→</span>
+            <span>Prevention + Incident Memory</span>
+        </div>
+        <p class="note">Stack: FastAPI + PySpark + a no-build-step HTML/JS dashboard.
+        No Kafka, no Kubernetes, no cloud services, no vector database — a simple
+        architecture that can actually be demonstrated end-to-end.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">IMPACT &amp; MEASUREMENT</div>
+        <h2>Real measured numbers — and an honest gap</h2>
+        <table>
+            <tr><th>Metric</th><th>Value</th><th>Source</th></tr>
+            <tr><td>Automated engine + agent compute time (15 stages)</td>
+                <td class="metric">~12 ms</td><td>Audit log timestamps</td></tr>
+            <tr><td>Full demo process (incl. interpreter start)</td>
+                <td class="metric">~0.15 s</td><td>Measure-Command, local run</td></tr>
+            <tr><td>Automated tests passing</td>
+                <td class="metric">96 / 96</td><td>pytest</td></tr>
+            <tr><td>Production writes during recovery</td>
+                <td class="metric">0</td><td><code>production_modified: false</code></td></tr>
+        </table>
+        <p class="note">These numbers cover automated compute only — they exclude Spark
+        detection and real-world human approval wait time. We have not yet run a
+        controlled baseline (manual investigation) vs. AEGIS timing study; that
+        comparison is our next measurement step, not an assumed result.</p>
+    </section>
+
+    <section class="slide">
+        <div class="eyebrow">PROOF OF CONCEPT</div>
+        <h2>One complete, verifiable incident — end to end</h2>
+        <p>Incident <code>INC-20260930-001</code>: schema-contract violation, investigated,
+        risk-scored, recommended (REC-002 Targeted Rebuild), human-approved, executed
+        sandbox-only, verified (schema/rows/business values — all PASSED), and converted
+        into 4 prevention controls — all visible live on the dashboard and in the audit
+        trail.</p>
+        <p class="closing">AEGIS turns a critical data incident from a fragmented
+        investigation into an evidence-driven, controlled, and verifiable recovery
+        workflow.</p>
+    </section>
+
+</div>
+<div class="progress" id="progress"></div>
+<div class="pager" id="pager"></div>
+
+<script>
+const slides = document.querySelectorAll(".slide");
+let current = 0;
+
+function render() {
+    slides.forEach((s, i) => s.classList.toggle("active", i === current));
+    document.getElementById("progress").style.width = ((current + 1) / slides.length * 100) + "%";
+    document.getElementById("pager").textContent = (current + 1) + " / " + slides.length;
+}
+
+function go(delta) {
+    current = Math.min(slides.length - 1, Math.max(0, current + delta));
+    render();
+}
+
+document.addEventListener("keydown", (event) => {
+    if (["ArrowRight", "PageDown", " "].includes(event.key)) go(1);
+    if (["ArrowLeft", "PageUp"].includes(event.key)) go(-1);
+});
+document.addEventListener("click", (event) => {
+    if (event.clientX > window.innerWidth / 2) go(1); else go(-1);
+});
+
+render();
+</script>
+</body>
+</html>

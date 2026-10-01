@@ -21,11 +21,15 @@ returns `400`. Unknown but well-formed ids return `404`.
 | GET | `/api/incidents/{id}/verification` | Sandbox verification + post-execution verification artifacts (whichever exist). |
 | GET | `/api/incidents/{id}/audit` | Full audit event trail (JSONL, oldest first). |
 | GET | `/api/incidents/{id}/prevention` | Persisted prevention recommendations. |
+| GET | `/api/incidents/{id}/agents` | Persisted structured investigator and recovery-agent report. |
+| GET | `/api/incidents/{id}/memory` | Structured incident memory plus real matching historical incident references. |
 
 ## Guarded, state-changing endpoints
 
 | Method | Path | Body / Query | Behavior |
 |---|---|---|---|
+| POST | `/api/incidents/{id}/investigate` | — | Runs deterministic evidence/RCA/impact/strategy/risk/decision/simulation stages and structured advisory agents. Always stops at `WAITING_FOR_HUMAN_APPROVAL`; never approves or executes. |
+| POST | `/api/incidents/{id}/prevention/analyze` | — | Runs prevention and memory analysis only after successful post-execution verification; otherwise returns `409`. |
 | POST | `/api/incidents/{id}/simulate` | — | Runs the sandbox simulation stage; `404` if strategies haven't been generated yet. |
 | POST | `/api/incidents/{id}/approval` | `{"strategy_id", "decision": "APPROVE"\|"REJECT", "approver"}` | Fail-closed: `409` if verification hasn't passed, if the request has already been rejected, or if the strategy doesn't match. Idempotent if already approved. On success, also re-derives the authorization record. |
 | POST | `/api/incidents/{id}/execute` | `?strategy_id=REC-002` | Fail-closed (`409`) unless authorized. Idempotent: returns the existing execution record (`"idempotent": true`) if already executed — never re-copies. |

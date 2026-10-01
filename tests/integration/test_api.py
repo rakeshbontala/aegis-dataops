@@ -64,6 +64,86 @@ def test_prevention_endpoint_ok():
     assert response.status_code in (200, 404)
 
 
+def test_agent_investigation_stops_before_human_approval(monkeypatch):
+    class FakeOrchestrator:
+        def run_analysis(self, incident_id):
+            return {
+                "incident_id": incident_id,
+                "workflow_status": "WAITING_FOR_HUMAN_APPROVAL",
+                "execution_allowed": False,
+                "production_execution_allowed": False,
+                "investigation": {"status": "COMPLETED"},
+                "recovery_analysis": {
+                    "details": {"recommended_strategy": {"strategy_id": "REC-002"}}
+                },
+            }
+
+    monkeypatch.setattr("api.main.RecoveryOrchestratorAgent", FakeOrchestrator)
+    response = client.post(f"/api/incidents/{INCIDENT_ID}/investigate")
+    assert response.status_code == 200
+
+    body = response.json()
+    assert body["workflow_status"] == "WAITING_FOR_HUMAN_APPROVAL"
+    assert body["execution_allowed"] is False
+    assert body["production_execution_allowed"] is False
+    assert body["investigation"]["status"] == "COMPLETED"
+    assert body["recovery_analysis"]["details"]["recommended_strategy"]["strategy_id"] == "REC-002"
+
+
+def test_agent_report_endpoint_returns_persisted_analysis(monkeypatch):
+    monkeypatch.setattr(
+        "api.main.load_agent_report",
+        lambda incident_id: {
+            "incident_id": incident_id,
+            "orchestrator": "recovery_orchestrator",
+        },
+    )
+    response = client.get(f"/api/incidents/{INCIDENT_ID}/agents")
+    assert response.status_code == 200
+    assert response.json()["orchestrator"] == "recovery_orchestrator"
+
+
+def test_verified_prevention_agent_endpoint(monkeypatch):
+    class FakeOrchestrator:
+        def run_post_recovery(self, incident_id):
+            return {
+                "incident_id": incident_id,
+                "workflow_status": "COMPLETED",
+                "execution_allowed": False,
+                "prevention_analysis": {"status": "COMPLETED"},
+            }
+
+    monkeypatch.setattr("api.main.RecoveryOrchestratorAgent", FakeOrchestrator)
+    response = client.post(f"/api/incidents/{INCIDENT_ID}/prevention/analyze")
+    assert response.status_code == 200
+    assert response.json()["execution_allowed"] is False
+    assert response.json()["prevention_analysis"]["status"] == "COMPLETED"
+
+
+def test_memory_endpoint(monkeypatch, tmp_path):
+    import types
+
+    from api import main
+
+    memory_file = tmp_path / f"{INCIDENT_ID}.json"
+    memory_file.write_text(
+        f'{{"incident_id": "{INCIDENT_ID}", "incident_type": "SCHEMA_DRIFT"}}',
+        encoding="utf-8",
+    )
+    fake_settings = types.SimpleNamespace(
+        paths=types.SimpleNamespace(
+            incidents_dir=main.settings.paths.incidents_dir,
+            historical_dir=tmp_path,
+        )
+    )
+    monkeypatch.setattr(main, "settings", fake_settings)
+    monkeypatch.setattr(main, "find_similar_incidents", lambda incident_id: [])
+
+    memory_response = client.get(f"/api/incidents/{INCIDENT_ID}/memory")
+    assert memory_response.status_code == 200
+    assert memory_response.json()["incident_id"] == INCIDENT_ID
+
+
 def test_explanation_endpoint_is_advisory_only():
     """AI (if configured) may only narrate the decision - the endpoint must
     never expose approval/execution controls, and defaults to deterministic."""
